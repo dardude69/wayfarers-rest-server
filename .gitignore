@@ -4,6 +4,9 @@
 # Certificates and certificate accessories
 keys/
 
+# SQLite database
+db.sqlite3
+
 # Logs
 logs
 *.log

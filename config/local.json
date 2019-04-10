@@ -1,4 +1,5 @@
 {
+  "databaseFilePath": "db.sqlite3",
   "tls": {
     "certFilePath": "keys/local.crt",
     "keyFilePath": "keys/local.key"
