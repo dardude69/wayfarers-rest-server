@@ -1,0 +1,7 @@
+{
+  "tls": {
+    "certFilePath": "keys/local.crt",
+    "keyFilePath": "keys/local.key"
+  },
+  "port": 8000
+}

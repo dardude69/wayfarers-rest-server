@@ -1,6 +1,9 @@
 # Vim swap files
 *.swp
 
+# Certificates and certificate accessories
+keys/
+
 # Logs
 logs
 *.log
