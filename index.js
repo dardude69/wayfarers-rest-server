@@ -5,15 +5,25 @@ const sqlite3 = require('sqlite3');
 
 const app = require('express')();
 
-const db = new sqlite3.Database(config.get('databaseFilePath'));
-const playerRepository = require('./repositories/player/sqlite')(db);
+(async () => {
 
-app.use('/api/v1/players', require('./routes/players')(playerRepository));
-app.use('/api/v1/snapshots', require('./routes/snapshots'));
+  const db = new sqlite3.Database(config.get('databaseFilePath'));
 
-const options = {
-  cert: fs.readFileSync(config.get('tls.certFilePath')),
-  key: fs.readFileSync(config.get('tls.keyFilePath'))
-};
+  const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
 
-https.createServer(options, app).listen(config.get('port'));
+  /* Don't start serving until async dependency setup is complete.
+   * It makes the code easier to reason about. */
+
+  app.use('/api/v1/players', require('./routes/players')(playerRepository));
+  app.use('/api/v1/snapshots', require('./routes/snapshots'));
+
+  const options = {
+    cert: fs.readFileSync(config.get('tls.certFilePath')),
+    key: fs.readFileSync(config.get('tls.keyFilePath'))
+  };
+
+  https.createServer(options, app).listen(config.get('port'));
+
+})();
+
+// TODO: Catch close event, close all resources gracefully.

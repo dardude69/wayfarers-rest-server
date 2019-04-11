@@ -5,16 +5,17 @@ module.exports = playerRepository => {
 
   router.post('/', express.json(), (req, res) => {
 
-    const username = req.body.username;
-    const password = req.body.password;
+    // TODO: json validation middleware
+    // TODO: data validation middleware ("must contain username and password")
 
-    if (username === null || password === null) {
-      return res.sendStatus(400);
-    }
+    playerRepository.createUser(req.body.username, req.body.password)
+      .then(() => res.sendStatus(201))
+      .catch(error => {
 
-    playerRepository.createPlayer(username, password);
+        console.error(error);
+        res.sendStatus(500);
 
-    res.sendStatus(201);
+      });
 
   });
 
