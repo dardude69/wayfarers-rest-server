@@ -1,4 +1,4 @@
-module.exports = playerRepository => {
+module.exports = (world, playerRepository)=> {
 
   const express = require('express');
   const router = express.Router();
@@ -10,19 +10,16 @@ module.exports = playerRepository => {
 
     playerRepository.createUser(req.body.username, req.body.password)
       .then(() => res.sendStatus(201))
-      .catch(error => {
-
-        console.error(error);
-        res.sendStatus(500);
-
-      });
+      .catch(next);
 
   });
 
   router.post('/:username/movements', (req, res) => {
-    // TODO
+
+    
+
   });
 
   return router;
 
-}
+};

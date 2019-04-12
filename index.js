@@ -11,11 +11,36 @@ const app = require('express')();
 
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
 
+
+
+
+
+
+
+
+  // TODO: Load from file, db, etc.
+
+  const world = {
+    players = []
+  };
+
+  new Proxy(world, {
+
+    set: 
+
+  });
+
+
+
+
+
+
+
   /* Don't start serving until async dependency setup is complete.
    * It makes the code easier to reason about. */
 
-  app.use('/api/v1/players', require('./routes/players')(playerRepository));
-  app.use('/api/v1/snapshots', require('./routes/snapshots'));
+  app.use('/api/v1/players', require('./routes/players')(world, playerRepository));
+  app.use('/api/v1/snapshots', require('./routes/snapshots')(world));
 
   const options = {
     cert: fs.readFileSync(config.get('tls.certFilePath')),

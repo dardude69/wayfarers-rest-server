@@ -1,7 +1,25 @@
-const router = require('express').Router();
+module.exports = world => {
 
-router.get('/', (req, res) => {
+  const router = require('express').Router();
 
-});
+  router.get('/:frame?', (req, res) => {
 
-module.exports = router;
+    /* Time travel! */
+
+    let frame = 0;
+    if (req.params.frame) {
+      frame = parseInt(req.params.frame);
+
+      if (isNaN(frame)) {
+        return res.sendStatus(400);
+      }
+    }
+
+    // 
+
+    
+
+  });
+
+  return router;
+};
