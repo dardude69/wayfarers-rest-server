@@ -7,6 +7,8 @@ module.exports = (gameState, playerRepository) => {
    * Verify HTTP Basic Auth username/password match a username/password hash in
    * the database, and that the given username is also expected. */
 
+  // TODO: Extract (messaging wants to use it too).
+
   function verifyBasicAuthPlayerIs(username) {
     assert(username && username.length > 0);
 
@@ -30,17 +32,14 @@ module.exports = (gameState, playerRepository) => {
   /* Get player object from gameState, creating it if it doesn't exist. */
 
   async function getPlayer(id) {
-
     let playerState = gameState.players[id];
     if (playerState == null) {
-
       /* Lazy initialise player. */
-      playerState = {}
 
+      playerState = {}
       playerState.position = await playerRepository.getPlayerPosition(id);
 
       gameState.players[id] = playerState;
-
     }
 
     return playerState;
@@ -76,6 +75,7 @@ module.exports = (gameState, playerRepository) => {
     (req, res, next) => verifyBasicAuthPlayerIs(req.params.username)(req, res, next),
     express.json(),
     async (req, res) => {
+
       const id = await playerRepository.getPlayerIdFromUsername(req.params.username);
       const player = await getPlayer(id);
 
@@ -98,15 +98,15 @@ module.exports = (gameState, playerRepository) => {
           return res.sendStatus(400); // Bad request
       }
 
-      // TODO: Collision check. If collide, 409 (Conflict).
+      if (false) {
+        // TODO: Collision detection.
+        return res.sendStatus(409);
+      }
 
       player.position = newPosition;
 
-
-
-      console.log(player.position); // XXX
-
       res.sendStatus(204);
+
     });
 
   return router;

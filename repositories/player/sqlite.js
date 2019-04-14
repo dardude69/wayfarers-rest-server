@@ -63,6 +63,7 @@ module.exports = db => new Promise((resolve, reject) => {
 
       return row;
     }
+
   };
 
   /* Create database tables, if necessary. */

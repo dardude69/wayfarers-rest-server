@@ -1,4 +1,4 @@
-module.exports = world => {
+module.exports = gameState => {
 
   const router = require('express').Router();
 
@@ -15,9 +15,9 @@ module.exports = world => {
       }
     }
 
-    // 
+    // TODO: Actually use frame
 
-    
+    res.json(gameState);
 
   });
 
