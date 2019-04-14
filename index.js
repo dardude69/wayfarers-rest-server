@@ -4,6 +4,8 @@ const https = require('https');
 const sqlite3 = require('sqlite3');
 const util = require('util');
 
+const loadMap = require('./load-map');
+
 const app = require('express')();
 
 (async () => {
@@ -14,12 +16,17 @@ const app = require('express')();
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
 
   const gameState = {
+    maps: {}
     players: {},
-    messages: {}
+    messages: {},
   };
+
+  loadMap('./maps/roddtest.json');
 
   /* Don't start serving until async dependency setup is complete.
    * It makes the code easier to reason about. */
+
+  app.use(express.static('/images'));
 
   app.use('/api/v1/messages', require('./routes/messages')(gameState));
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
