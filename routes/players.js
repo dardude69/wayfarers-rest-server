@@ -2,7 +2,9 @@ const assert = require('assert');
 
 module.exports = (gameState, playerRepository) => {
 
-  /* Verify HTTP Basic Auth username/password match a username/password hash in
+  /* Express middleware:
+   *
+   * Verify HTTP Basic Auth username/password match a username/password hash in
    * the database, and that the given username is also expected. */
 
   function verifyBasicAuthPlayerIs(username) {
@@ -25,6 +27,30 @@ module.exports = (gameState, playerRepository) => {
     };
   }
 
+  /* Get player object from gameState, creating it if it doesn't exist. */
+
+  async function getPlayer(id) {
+
+    let playerState = gameState.players[id];
+    if (playerState == null) {
+
+      /* Lazy initialise player. */
+      playerState = {}
+
+      playerState.position = await playerRepository.getPlayerPosition(id);
+
+      gameState.players[id] = playerState;
+
+    }
+
+    return playerState;
+  }
+
+  async function getPlayerByUsername(username) {
+    const id = await playerRepository.getPlayerIdFromUsername(username);
+    return getPlayer(id);
+  }
+
   const express = require('express');
   const router = express.Router();
 
@@ -35,7 +61,7 @@ module.exports = (gameState, playerRepository) => {
       return res.sendStatus(400); // Bad request
     }
 
-    if (await playerRepository.playerExists(req.body.username)) {
+    if (await playerRepository.playerWithUsernameExists(req.body.username)) {
       return res.sendStatus(409); // Conflict
     }
 
@@ -49,9 +75,11 @@ module.exports = (gameState, playerRepository) => {
   router.post('/:username/movements',
     (req, res, next) => verifyBasicAuthPlayerIs(req.params.username)(req, res, next),
     express.json(),
-    (req, res) => {
-      const position = { x: 0, y: 0 }; // TODO: Get from player entity
-      const newPosition = position;
+    async (req, res) => {
+      const id = await playerRepository.getPlayerIdFromUsername(req.params.username);
+      const player = await getPlayer(id);
+
+      const newPosition = player.position;
 
       switch (req.body.direction) {
         case 'left':
@@ -70,9 +98,13 @@ module.exports = (gameState, playerRepository) => {
           return res.sendStatus(400); // Bad request
       }
 
-      console.log(newPosition); // XXX
-
       // TODO: Collision check. If collide, 409 (Conflict).
+
+      player.position = newPosition;
+
+
+
+      console.log(player.position); // XXX
 
       res.sendStatus(204);
     });

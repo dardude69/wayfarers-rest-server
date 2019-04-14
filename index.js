@@ -2,12 +2,14 @@ const config = require('config');
 const fs = require('fs');
 const https = require('https');
 const sqlite3 = require('sqlite3');
+const util = require('util');
 
 const app = require('express')();
 
 (async () => {
 
   const db = new sqlite3.Database(config.get('databaseFilePath'));
+  await util.promisify(db.run.bind(db))('PRAGMA foreign_keys = ON;');
 
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
 
@@ -22,7 +24,11 @@ const app = require('express')();
   // TODO: Proxy.
 
   const gameState = {
-    players: [],
+    players: {
+
+      
+
+    },
 
     messages: {}
   };

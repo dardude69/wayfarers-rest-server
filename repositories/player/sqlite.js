@@ -4,7 +4,7 @@
  * resolve promise with player repository API to act on database. */
 
 const argon2 = require('argon2');
-const assert = require('assert');
+const assert = require('assert').strict;
 const util = require('util');
 const uuid = require('uuid/v4');
 
@@ -16,12 +16,23 @@ module.exports = db => new Promise((resolve, reject) => {
   const repository = {
 
     createPlayer: async (username, password) => {
+      const id = uuid();
+
+      /* This has to go first;
+       *
+       * the other tables have a foreign key constraint on the player ID in
+       * this table. */
 
       const passwordHash = await argon2.hash(password);
-      return dbRunAsync(`INSERT INTO Players VALUES (?, ?, ?, datetime('now'));`,
-        uuid(),
-        username,
-        passwordHash);
+      await dbRunAsync(`INSERT INTO Players VALUES (?, ?, ?, datetime('now'));`, id, username, passwordHash)
+
+      /* Promise golf! */
+
+      return Promise.all(
+        [
+          dbRunAsync('INSERT INTO PlayerLocations VALUES (?, 0, 0);', id)
+        ]
+      );
 
     },
 
@@ -34,17 +45,29 @@ module.exports = db => new Promise((resolve, reject) => {
       }
 
       return argon2.verify(passwordHash, password);
-
     },
 
-    getPlayerId: username => dbGetAsync('SELECT id FROM Players WHERE username = ?;', username),
+    playerWithUsernameExists: async username =>
+      (await dbGetAsync('SELECT EXISTS (SELECT 1 FROM Players WHERE username = ?) AS player_exists;', username)).player_exists === 1,
 
-    playerExists: async username => (await dbGetAsync('SELECT EXISTS (SELECT 1 FROM Players WHERE username = ?) AS player_exists;', username)).player_exists === 1,
+    getPlayerIdFromUsername: async username => {
+      const row = await dbGetAsync('SELECT id FROM Players WHERE username = ?;', username);
+      assert(row);
+
+      return row.id;
+    },
+
+    getPlayerPosition: async id => {
+      const row = await dbGetAsync('SELECT x, y FROM PlayerLocations WHERE player_id = ?;', id);
+      assert(row);
+
+      return row;
+    }
   };
 
   /* Create database tables, if necessary. */
 
-  const createPlayerTableSql = `
+  const createPlayersTableSql = `
     CREATE TABLE IF NOT EXISTS Players (
       id TEXT PRIMARY KEY NOT NULL,
       username TEXT NOT NULL UNIQUE,
@@ -53,7 +76,16 @@ module.exports = db => new Promise((resolve, reject) => {
     );
   `;
 
-  dbRunAsync(createPlayerTableSql)
+  const createPlayerLocationsTableSql = `
+    CREATE TABLE IF NOT EXISTS PlayerLocations (
+      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
+      x INTEGER NOT NULL,
+      y INTEGER NOT NULL
+    );
+  `;
+
+  dbRunAsync(createPlayersTableSql)
+    .then(dbRunAsync(createPlayerLocationsTableSql))
     .then(() => resolve(repository))
     .catch(error => reject(error));
 
