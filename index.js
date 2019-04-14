@@ -19,16 +19,13 @@ const app = require('express')();
 
 
   // TODO: Load from file, db, etc.
+  // TODO: Proxy.
 
-  const world = {
-    players = []
+  const gameState = {
+    players: [],
+
+    messages: {}
   };
-
-  new Proxy(world, {
-
-    set: 
-
-  });
 
 
 
@@ -39,8 +36,9 @@ const app = require('express')();
   /* Don't start serving until async dependency setup is complete.
    * It makes the code easier to reason about. */
 
-  app.use('/api/v1/players', require('./routes/players')(world, playerRepository));
-  app.use('/api/v1/snapshots', require('./routes/snapshots')(world));
+  app.use('/api/v1/messages', require('./routes/messages')(gameState));
+  app.use('/api/v1/players', require('./routes/players')(gameState, playerRepository));
+  app.use('/api/v1/snapshots', require('./routes/snapshots')(gameState));
 
   const options = {
     cert: fs.readFileSync(config.get('tls.certFilePath')),

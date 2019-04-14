@@ -17,6 +17,7 @@
   "homepage": "https://gitlab.com/0xc0c0a/wayfarers-rest-server#readme",
   "dependencies": {
     "argon2": "^0.21.0",
+    "basic-auth": "^2.0.1",
     "config": "^3.1.0",
     "express": "^4.16.4",
     "sqlite3": "^4.0.6",
