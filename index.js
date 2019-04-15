@@ -16,7 +16,8 @@ const app = require('express')();
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
 
   const gameState = {
-    maps: {}
+    maps: {},
+    items: {},
     players: {},
     messages: {},
   };
