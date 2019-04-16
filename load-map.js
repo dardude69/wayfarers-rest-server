@@ -8,29 +8,31 @@
    * assert freely here.) */
 
 const assert = require('assert').strict;
+const arrayUtil = require('./array-util');
 
 function loadCollisions(tiledExport, map) {
-  map.collisions = [];
-
   const collisionLayers = tiledExport.layers.filter(layer => layer.name === 'Collision');
 
   assert(collisionLayers.length < 2, 'multiple collision layers are not supported');
   if (collisionLayers.length === 0) {
+    map.collisions = [];
     return;
   }
 
   const collisionLayer = collisionLayers[0];
-  const rows = collisionLayer.data.length / collisionLayer.width;
 
-  for (let row = 0; row < rows; ++row) {
-    map.collisions[row] =
-      collisionLayer.data
-        .slice(row * collisionLayer.width, (row+1) * collisionLayer.width)
-        .map(tile => tile > 0);
-  }
+  map.collisions = arrayUtil.linearToGrid(collisionLayer.data, collisionLayer.width)
+    .map(tile => tile > 0);
 }
 
-function loadTiles(tiledLayer, map) {
+function loadTiles(tiledExport, map) {
+  map.tiles = [];
+
+  tiledExport.layers
+    .filter(layer => layer.name !== 'Collision')
+    .forEach(layer => {
+      map.tiles.push(arrayUtil.linearToGrid(layer.data, layer.width));
+    });
 }
 
 module.exports = (filePath, gameState) => {
