@@ -1,8 +1,16 @@
 {
+  "playerDefaults": {
+    "location": {
+      "x": 11,
+      "y": 11,
+      "map": "./maps/basement.json"
+    }
+  },
+
   "databaseFilePath": "db.sqlite3",
+  "port": 8000,
   "tls": {
     "certFilePath": "keys/local.crt",
     "keyFilePath": "keys/local.key"
-  },
-  "port": 8000
+  }
 }

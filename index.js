@@ -1,4 +1,7 @@
+'use strict';
+
 const config = require('config');
+const express = require('express');
 const fs = require('fs');
 const https = require('https');
 const sqlite3 = require('sqlite3');
@@ -6,7 +9,7 @@ const util = require('util');
 
 const loadMap = require('./load-map');
 
-const app = require('express')();
+const app = express();
 
 (async () => {
 
@@ -22,17 +25,16 @@ const app = require('express')();
     messages: {},
   };
 
-  loadMap('./maps/roddtest.json');
+  loadMap('./maps/basement.json', gameState);
 
-  /* Don't start serving until async dependency setup is complete.
+  /* Don't start serving until dependency setup is complete.
    * It makes the code easier to reason about. */
 
-  app.use(express.static('/images'));
-
-  app.use('/api/v1/messages', require('./routes/messages')(gameState));
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
+  app.use('/api/v1/messages', require('./routes/messages')(gameState));
   app.use('/api/v1/players', require('./routes/players')(gameState, playerRepository));
-  app.use('/api/v1/snapshots', require('./routes/snapshots')(gameState));
+
+  /* Speaking of serving: server! */
 
   const options = {
     cert: fs.readFileSync(config.get('tls.certFilePath')),

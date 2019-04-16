@@ -1,14 +1,8 @@
 'use strict';
 
-/* Create tables in database if they're missing,
- * resolve promise with player repository API to act on database. */
-
-// TODO: Submodules for item and equipment handling.
-  // TODO: Or at least organise it here.
-// TODO: Also split location handling into submodule.
-
 const argon2 = require('argon2');
 const assert = require('assert').strict;
+const config = require('config');
 const util = require('util');
 const uuid = require('uuid/v4');
 
@@ -34,14 +28,20 @@ module.exports = async db => {
 
       return Promise.all(
         [
-          dbRunAsync('INSERT INTO PlayerLocations VALUES (?, 0, 0);', id)
+          dbRunAsync('INSERT INTO PlayerLocations (player_id, x, y, map) VALUES (?, ?, ?, ?);',
+            id,
+            config.get('playerDefaults.location.x'),
+            config.get('playerDefaults.location.y'),
+            config.get('playerDefaults.location.map'))
         ]
       );
 
     },
 
     authPlayer: async (username, password) => {
-      assert(username != null && username.length > 0 && password != null);
+      assert(username != null);
+      assert(username.length > 0);
+      assert(password != null);
 
       const passwordHash = (await dbGetAsync('SELECT password_hash FROM Players WHERE username = ?;', username)).password_hash;
       if (passwordHash == null) {
@@ -62,7 +62,7 @@ module.exports = async db => {
     },
 
     getPlayerPosition: async id => {
-      const row = await dbGetAsync('SELECT x, y FROM PlayerLocations WHERE player_id = ?;', id);
+      const row = await dbGetAsync('SELECT x, y, map FROM PlayerLocations WHERE player_id = ?;', id);
       assert(row);
 
       return row;
@@ -70,54 +70,30 @@ module.exports = async db => {
 
   };
 
-  /* Create database tables, if necessary. */
+  /* Create database tables (synchronising on dependencies). */
 
-  const createPlayersTableSql = `
+  await dbRunAsync(`
     CREATE TABLE IF NOT EXISTS Players (
       id TEXT PRIMARY KEY NOT NULL,
       username TEXT NOT NULL UNIQUE,
       password_hash BLOB NOT NULL,
       created_at TEXT NOT NULL
     );
-  `;
+  `);
 
-  const createPlayerLocationsTableSql = `
-    CREATE TABLE IF NOT EXISTS PlayerLocations (
-      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
-      x INTEGER NOT NULL,
-      y INTEGER NOT NULL
-    );
-  `;
-
-  const createPlayerItemsTableSql = `
-    CREATE TABLE IF NOT EXISTS PlayerItems (
-      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
-      item TEXT NOT NULL,
-      quantity INTEGER NOT NULL,
-
-      PRIMARY KEY (player_id, item)
-    );
-  `;
-
-  const createPlayerEquipmentTableSql = `
-    CREATE TABLE IF NOT EXISTS PlayerEquipment (
-      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
-      item TEXT NOT NULL,
-      slot TEXT NOT NULL,
-
-      PRIMARY KEY (player_id, item, slot)
-    );
-  `;
-
-  await dbRunAsync(createPlayersTableSql);
   await Promise.all(
     [
-      dbRunAsync(createPlayerLocationsTableSql),
-      dbRunAsync(createPlayerItemsTableSql),
-      dbRunAsync(createPlayerEquipmentTableSql)
+      dbRunAsync(`
+        CREATE TABLE IF NOT EXISTS PlayerLocations (
+          player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
+          x INTEGER NOT NULL,
+          y INTEGER NOT NULL,
+          map TEXT NOT NULL,
+          PRIMARY KEY (player_id)
+        );
+      `)
     ]
   );
 
   return repository;
-
-});
+};

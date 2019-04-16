@@ -1,5 +1,5 @@
+const assert = require('assert').strict;
+
 module.exports = (filePath, gameState) => {
-
-  // TODO:
-
+  assert(false, 'load-item.js unimplemented');
 };
