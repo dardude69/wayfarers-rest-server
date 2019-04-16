@@ -3,12 +3,16 @@
 /* Create tables in database if they're missing,
  * resolve promise with player repository API to act on database. */
 
+// TODO: Submodules for item and equipment handling.
+  // TODO: Or at least organise it here.
+// TODO: Also split location handling into submodule.
+
 const argon2 = require('argon2');
 const assert = require('assert').strict;
 const util = require('util');
 const uuid = require('uuid/v4');
 
-module.exports = db => new Promise((resolve, reject) => {
+module.exports = async db => {
 
   const dbRunAsync = util.promisify(db.run.bind(db));
   const dbGetAsync = util.promisify(db.get.bind(db));
@@ -85,9 +89,35 @@ module.exports = db => new Promise((resolve, reject) => {
     );
   `;
 
-  dbRunAsync(createPlayersTableSql)
-    .then(dbRunAsync(createPlayerLocationsTableSql))
-    .then(() => resolve(repository))
-    .catch(error => reject(error));
+  const createPlayerItemsTableSql = `
+    CREATE TABLE IF NOT EXISTS PlayerItems (
+      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
+      item TEXT NOT NULL,
+      quantity INTEGER NOT NULL,
+
+      PRIMARY KEY (player_id, item)
+    );
+  `;
+
+  const createPlayerEquipmentTableSql = `
+    CREATE TABLE IF NOT EXISTS PlayerEquipment (
+      player_id TEXT NOT NULL REFERENCES Players (id) ON DELETE CASCADE,
+      item TEXT NOT NULL,
+      slot TEXT NOT NULL,
+
+      PRIMARY KEY (player_id, item, slot)
+    );
+  `;
+
+  await dbRunAsync(createPlayersTableSql);
+  await Promise.all(
+    [
+      dbRunAsync(createPlayerLocationsTableSql),
+      dbRunAsync(createPlayerItemsTableSql),
+      dbRunAsync(createPlayerEquipmentTableSql)
+    ]
+  );
+
+  return repository;
 
 });
