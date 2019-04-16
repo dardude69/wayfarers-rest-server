@@ -33,6 +33,7 @@ const app = express();
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
   app.use('/api/v1/messages', require('./routes/messages')(gameState));
   app.use('/api/v1/players', require('./routes/players')(gameState, playerRepository));
+  app.use('/api/v1/snapshot', require('./routes/snapshot')(gameState, playerRepository));
 
   /* Speaking of serving: server! */
 

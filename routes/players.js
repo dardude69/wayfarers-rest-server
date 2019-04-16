@@ -24,7 +24,7 @@ module.exports = (gameState, playerRepository) => {
   /* Move player. */
 
   router.post('/:username/movements',
-    (req, res, next) => playerUtil.basicAuthExpectPlayer(req.params.username, playerRepository)(req, res, next),
+    async (req, res, next) => (await playerUtil.basicAuthExpectPlayer(req.params.username, playerRepository))(req, res, next),
     express.json(),
     async (req, res) => {
       const id = await playerRepository.getPlayerIdFromUsername(req.params.username);

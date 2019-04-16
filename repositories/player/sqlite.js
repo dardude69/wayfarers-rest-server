@@ -43,12 +43,12 @@ module.exports = async db => {
       assert(username.length > 0);
       assert(password != null);
 
-      const passwordHash = (await dbGetAsync('SELECT password_hash FROM Players WHERE username = ?;', username)).password_hash;
-      if (passwordHash == null) {
+      const row = await dbGetAsync('SELECT password_hash FROM Players WHERE username = ?;', username);
+      if (row == null) {
         return false; // The user doesn't exist.
       }
 
-      return argon2.verify(passwordHash, password);
+      return argon2.verify(row.password_hash, password);
     },
 
     playerWithUsernameExists: async username =>
@@ -61,7 +61,7 @@ module.exports = async db => {
       return row.id;
     },
 
-    getPlayerPosition: async id => {
+    getPlayerLocation: async id => {
       const row = await dbGetAsync('SELECT x, y, map FROM PlayerLocations WHERE player_id = ?;', id);
       assert(row);
 
