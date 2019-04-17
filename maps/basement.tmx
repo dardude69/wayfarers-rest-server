@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" infinite="0" backgroundcolor="#000000" nextlayerid="10" nextobjectid="1">
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="25" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="1">
  <tileset firstgid="1" name="magecity" tilewidth="32" tileheight="32" tilecount="360" columns="8">
-  <image source="magecity.png" width="256" height="1450"/>
+  <image source="../../maps/magecity.png" width="256" height="1450"/>
  </tileset>
  <tileset firstgid="361" name="collision" tilewidth="32" tileheight="32" tilecount="1" columns="1">
-  <image source="collision.png" width="32" height="32"/>
+  <image source="../../maps/collision.png" width="32" height="32"/>
  </tileset>
  <layer id="6" name="Background" width="25" height="25">
   <data encoding="csv">
@@ -37,7 +37,7 @@
  </layer>
  <layer id="7" name="DecorationBack" width="25" height="25">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+361,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

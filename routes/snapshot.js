@@ -11,11 +11,13 @@ module.exports = (gameState, playerRepository) => {
       const currentPlayerState = await playerUtil.getPlayerState(currentPlayerId, gameState, playerRepository);
 
       const snapshot = {
+        players: {},
+
         map: {
-          collision: gameState.maps[currentPlayerState.location.map].collision,
+          width: gameState.maps[currentPlayerState.location.map].width,
+          height: gameState.maps[currentPlayerState.location.map].height,
           tiles: gameState.maps[currentPlayerState.location.map].tiles
         },
-        players: {},
         messages: gameState.messages
       };
 

@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('config');
+const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
 const https = require('https');
@@ -29,6 +30,12 @@ const app = express();
 
   /* Don't start serving until dependency setup is complete.
    * It makes the code easier to reason about. */
+
+  /* Free love, baby. */
+  app.use(cors({
+    credentials: true,
+    origin: true
+  }));
 
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
   app.use('/api/v1/messages', require('./routes/messages')(gameState));

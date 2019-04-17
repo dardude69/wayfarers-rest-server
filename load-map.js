@@ -36,10 +36,13 @@ function loadTiles(tiledExport, map) {
 }
 
 module.exports = (filePath, gameState) => {
-  const map = {};
-
   const tiledExport = require(filePath);
   assert(!tiledExport.infinite, 'infinite maps are not supported');
+
+  const map = {
+    width: tiledExport.width,
+    height: tiledExport.height
+  };
 
   loadCollisions(tiledExport, map);
   loadTiles(tiledExport, map);

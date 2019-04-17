@@ -28,9 +28,9 @@ module.exports = (gameState, playerRepository) => {
     express.json(),
     async (req, res) => {
       const id = await playerRepository.getPlayerIdFromUsername(req.params.username);
-      const player = await playerUtils.getPlayerState(id);
+      const player = await playerUtil.getPlayerState(id, gameState, playerRepository);
 
-      let {x, y} = player.location;
+      let {x, y, map} = player.location;
 
       switch (req.body.direction) {
         case 'left':
@@ -53,7 +53,8 @@ module.exports = (gameState, playerRepository) => {
         return res.sendStatus(409);
       }
 
-      player.location = {x, y};
+      player.location.x = x;
+      player.location.y = y;
 
       res.sendStatus(204);
     }
