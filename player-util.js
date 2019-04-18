@@ -33,7 +33,18 @@ module.exports = {
     let playerState = gameState.players[id];
 
     if (playerState == null) {
-      playerState = {};
+      /* Whenever a value is set on playerState, record the time it happened.
+       * Used to "log out" inactive players. */
+      const handler = {
+        set: (target, property, value) => {
+          assert(property !== 'updatedAt'); // Don't be dumb.
+
+          target.updatedAt = Date.now();
+          return Reflect.set(target, property, value);
+        }
+      };
+
+      playerState = new Proxy({}, handler);
       playerState.location = await playerRepository.getPlayerLocation(id);
 
       gameState.players[id] = playerState;
