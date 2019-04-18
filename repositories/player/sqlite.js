@@ -61,6 +61,13 @@ module.exports = async db => {
       return row.id;
     },
 
+    getPlayerUsernameFromId: async id => {
+      const row = await dbGetAsync('SELECT username FROM Players WHERE id = ?;', id);
+      assert(row);
+
+      return row.username;
+    },
+
     getPlayerLocation: async id => {
       const row = await dbGetAsync('SELECT x, y, map FROM PlayerLocations WHERE player_id = ?;', id);
       assert(row);

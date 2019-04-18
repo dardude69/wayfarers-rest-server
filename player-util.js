@@ -46,6 +46,7 @@ module.exports = {
 
       playerState = new Proxy({}, handler);
       playerState.location = await playerRepository.getPlayerLocation(id);
+      playerState.username = await playerRepository.getPlayerUsernameFromId(id);
 
       gameState.players[id] = playerState;
     }

@@ -21,6 +21,13 @@ module.exports = (gameState, playerRepository) => {
       .catch(next);
   });
 
+  /* Verify player credentials. */
+
+  router.get('/:username/authentication',
+    async (req, res, next) => (await playerUtil.basicAuthExpectPlayer(req.params.username, playerRepository))(req, res, next),
+    (req, res) => res.sendStatus(204)
+  );
+
   /* Move player. */
 
   router.post('/:username/movements',

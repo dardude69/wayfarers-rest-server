@@ -25,7 +25,12 @@ module.exports = (gameState, playerRepository) => {
 
       for ([id, playerState] of Object.entries(gameState.players)) {
         if (playerState.location.map === currentPlayerState.location.map) {
-          snapshot.players[id] = playerState;
+
+          snapshot.players[id] = {
+            location: playerState.location,
+            username: playerState.username
+          }
+
         }
       }
 

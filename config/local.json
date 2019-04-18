@@ -7,6 +7,9 @@
     }
   },
 
+  "tickrate": 33,
+  "playerInactivityDespawnTime": 30,
+
   "databaseFilePath": "db.sqlite3",
   "port": 8000,
   "tls": {

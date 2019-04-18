@@ -5,14 +5,30 @@ const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
 const https = require('https');
+const loadMap = require('./load-map');
 const sqlite3 = require('sqlite3');
 const util = require('util');
 
-const loadMap = require('./load-map');
-
-const app = express();
-
 (async () => {
+
+  function update() {
+
+    /* Remove player objects when the player hasn't done anything for
+     * a while. */
+
+    Object.keys(gameState.players)
+      .filter(key => {
+        const updatedAt = gameState.players[key].updatedAt;
+        const despawnTime = config.get('playerInactivityDespawnTime');
+
+        return (Date.now()-updatedAt) >= (1000*despawnTime);
+      })
+      .forEach(key => {
+        // TODO: Last chance for serialization.
+        delete gameState.players[key]
+      });
+
+  }
 
   const db = new sqlite3.Database(config.get('databaseFilePath'));
   await util.promisify(db.run.bind(db))('PRAGMA foreign_keys = ON;');
@@ -28,28 +44,20 @@ const app = express();
 
   loadMap('./maps/basement.json', gameState);
 
-  /* Don't start serving until dependency setup is complete.
-   * It makes the code easier to reason about. */
-
-  /* Free love, baby. */
-  app.use(cors({
-    credentials: true,
-    origin: true
-  }));
-
+  const app = express();
+  app.use(cors({ credentials: true, origin: true })); // Free love.
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
   app.use('/api/v1/messages', require('./routes/messages')(gameState));
   app.use('/api/v1/players', require('./routes/players')(gameState, playerRepository));
   app.use('/api/v1/snapshot', require('./routes/snapshot')(gameState, playerRepository));
 
-  /* Speaking of serving: server! */
-
   const options = {
     cert: fs.readFileSync(config.get('tls.certFilePath')),
     key: fs.readFileSync(config.get('tls.keyFilePath'))
   };
-
   https.createServer(options, app).listen(config.get('port'));
+
+  setInterval(update, 1000 / config.get('tickrate'));
 
 })();
 
