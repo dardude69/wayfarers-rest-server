@@ -21,8 +21,10 @@ function loadCollisions(tiledExport, map) {
 
   const collisionLayer = collisionLayers[0];
 
-  map.collisions = arrayUtil.linearToGrid(collisionLayer.data, collisionLayer.width)
-    .map(tile => tile > 0);
+  map.collisions = arrayUtil.linearToGrid(
+    collisionLayer.data
+      .map(tile => tile > 0),
+    collisionLayer.width);
 }
 
 function loadTiles(tiledExport, map) {
