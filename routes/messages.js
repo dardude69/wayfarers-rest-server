@@ -2,14 +2,7 @@
 
 const express = require('express');
 
-function makeNextMessageId() {
-  let id = 0;
-  return () => id++;
-}
-
 module.exports = gameState => {
-  const nextMessageId = makeNextMessageId();
-
   const router = express.Router();
 
   router.get('/', (req, res) => {
@@ -21,7 +14,9 @@ module.exports = gameState => {
       return res.sendStatus(400);
     }
 
-    gameState.messages[nextMessageId()] = req.body;
+    gameState.messages.push(req.body);
+    gameState.messages = gameState.messages.slice(-32);
+
     res.sendStatus(204);
   });
 

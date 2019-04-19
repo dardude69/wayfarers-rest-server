@@ -30,28 +30,33 @@ module.exports = {
   /* Lazy initialise/retrieve player state object from game state. */
 
   getPlayerState: async (id, gameState, playerRepository) => {
-    let playerState = gameState.players[id];
-
-    if (playerState == null) {
+    if (gameState.players[id] == null) {
       /* Whenever a value is set on playerState, record the time it happened.
        * Used to "log out" inactive players. */
+
+      const playerState = {}
+      playerState.location = await playerRepository.getPlayerLocation(id);
+      playerState.username = await playerRepository.getPlayerUsernameFromId(id);
+
       const handler = {
+        get: (target, property) => {
+          if (typeof(target[property]) === 'object' && target[property] !== null) {
+            return new Proxy(target[property], handler);
+          }
+          return Reflect.get(target, property);
+        },
+
         set: (target, property, value) => {
           assert(property !== 'updatedAt'); // Don't be dumb.
-
-          target.updatedAt = Date.now();
+          playerState.updatedAt = Date.now();
           return Reflect.set(target, property, value);
         }
       };
 
-      playerState = new Proxy({}, handler);
-      playerState.location = await playerRepository.getPlayerLocation(id);
-      playerState.username = await playerRepository.getPlayerUsernameFromId(id);
-
-      gameState.players[id] = playerState;
+      gameState.players[id] = new Proxy(playerState, handler);
     }
 
-    return playerState;
+    return gameState.players[id];
   }
 
 };

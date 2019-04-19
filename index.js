@@ -38,10 +38,13 @@ const util = require('util');
   const gameState = {
     maps: {},
     players: {},
-    messages: {},
+
+    messages: [],
   };
 
   loadMap('./maps/basement.json', gameState);
+  loadMap('./maps/tavern.json', gameState);
+  loadMap('./maps/overworld.json', gameState);
 
   const app = express();
   app.use(cors({ credentials: true, origin: true })); // Free love.

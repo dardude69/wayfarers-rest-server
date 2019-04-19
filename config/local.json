@@ -2,15 +2,15 @@
   "playerDefaults": {
     "location": {
       "x": 2,
-      "y": 4,
+      "y": 3,
       "map": "./maps/basement.json"
     }
   },
 
   "tickrate": 33,
-  "playerInactivityDespawnTime": 300,
+  "playerInactivityDespawnTime": 180,
 
-  "tileSize": 32,
+  "tileSize": 16,
 
   "databaseFilePath": "db.sqlite3",
   "port": 8000,
