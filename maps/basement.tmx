@@ -58,8 +58,8 @@
   <object id="38" name="Basement" type="Teleporter" gid="353" x="64" y="128" width="32" height="32">
    <properties>
     <property name="map" value="./maps/basement.json"/>
-    <property name="x" type="int" value="11"/>
-    <property name="y" type="int" value="11"/>
+    <property name="x" type="int" value="0"/>
+    <property name="y" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>

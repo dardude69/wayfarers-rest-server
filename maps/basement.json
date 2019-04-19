@@ -68,12 +68,12 @@
                         {
                          "name":"x",
                          "type":"int",
-                         "value":11
+                         "value":0
                         }, 
                         {
                          "name":"y",
                          "type":"int",
-                         "value":11
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"Teleporter",

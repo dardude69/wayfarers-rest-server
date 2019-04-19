@@ -60,6 +60,15 @@ module.exports = (gameState, playerRepository) => {
         return res.sendStatus(409);
       }
 
+      const teleporter = gameState.maps[map].teleporters[y][x];
+      if (teleporter != null) {
+        player.location.map = teleporter.map;
+        player.location.x = teleporter.x;
+        player.location.y = teleporter.y;
+
+        return res.sendStatus(204);
+      }
+
       player.location.x = x;
       player.location.y = y;
 

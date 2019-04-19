@@ -43,8 +43,6 @@ const util = require('util');
 
   loadMap('./maps/basement.json', gameState);
 
-  console.log(gameState.maps['./maps/basement.json'].teleporters);
-
   const app = express();
   app.use(cors({ credentials: true, origin: true })); // Free love.
   app.use('/api/v1/microtransactions', require('./routes/microtransactions'));

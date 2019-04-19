@@ -67,7 +67,7 @@ function getObjectsOfType(tiledExport, type) {
     .map(tiledObject => {
       const object = {
         x: tiledObject.x / tileSize,
-        y: tiledObject.y / tileSize,
+        y: (tiledObject.y-tileSize) / tileSize,
 
         customProperties: {}
       };
@@ -90,9 +90,9 @@ function getTeleporters(tiledExport) {
 
   getObjectsOfType(tiledExport, 'Teleporter')
     .forEach(object => {
-      assert(object.customProperties.x);
-      assert(object.customProperties.y);
-      assert(object.customProperties.map);
+      assert(object.customProperties.x != null);
+      assert(object.customProperties.y != null);
+      assert(object.customProperties.map != null);
 
       teleporters[object.y][object.x] = {
         x: object.customProperties.x,
