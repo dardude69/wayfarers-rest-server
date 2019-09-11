@@ -1,5 +1,7 @@
 'use strict';
 
+const censor = require('../censor');
+const config = require('config');
 const express = require('express');
 const playerUtil = require('../player-util');
 
@@ -44,6 +46,13 @@ module.exports = (gameState, playerRepository) => {
     validatePostJsonSchema,
     validatePostSender,
     async (req, res, next) => (await playerUtil.basicAuthExpectPlayer(req.body.sender.username, playerRepository))(req, res, next),
+    (req, res, next) => {
+      if (config.get('censorMessageContent')) {
+        req.body.content = censor(req.body.content);
+      }
+
+      next();
+    },
     (req, res) => {
       gameState.messages.push({
         sender: {

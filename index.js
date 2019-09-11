@@ -51,10 +51,10 @@ const sqlite3 = require('sqlite3');
 
   const app = express();
   app.use(cors({ credentials: true, origin: true })); // Free love.
-  app.use('/api/v1/microtransactions', require('./routes/microtransactions'));
-  app.use('/api/v1/messages', require('./routes/messages')(gameState, playerRepository));
-  app.use('/api/v1/players', require('./routes/players')(gameState, playerRepository));
-  app.use('/api/v1/snapshot', require('./routes/snapshot')(gameState, playerRepository));
+  app.use('/api/v2/microtransactions', require('./routes/microtransactions'));
+  app.use('/api/v2/messages', require('./routes/messages')(gameState, playerRepository));
+  app.use('/api/v2/players', require('./routes/players')(gameState, playerRepository));
+  app.use('/api/v2/snapshot', require('./routes/snapshot')(gameState, playerRepository));
 
   const options = {
     cert: fs.readFileSync(config.get('tls.certFilePath')),

@@ -12,6 +12,8 @@
 
   "tileSize": 16,
 
+  "censorMessageContent": true,
+
   "sqliteDatabaseFilePath": "db.sqlite3",
 
   "port": 8000,
