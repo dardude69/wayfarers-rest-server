@@ -11,8 +11,11 @@
   "damned": "darned",
   "dammed": "darned",
 
-  "faggot": "one unsubscribed to notions of fashion",
-  "faggots": "those unsubscribed to notions of fashion",
+  "dick": "joystick",
+  "dicks": "joysticks",
+
+  "faggot": "man-unsubscribed-to-notions-of-fashion",
+  "faggots": "men-unsubscribed-to-notions-of-fashion",
 
   "fuck": "frick",
   "fucker": "fricker",
@@ -25,7 +28,10 @@
 
   "hell": "heck",
 
-  "motherfucker": "NEET",
+  "kike": "frugal man",
+  "kikes": "frugal men",
+
+  "motherfucker": "motherfricker",
 
   "nigga": "gentleman scholar",
   "nigger": "gentleman scholar",
@@ -38,5 +44,8 @@
   "shitty": "poopy",
 
   "slut": "experienced woman",
-  "sluts": "experienced women"
+  "sluts": "experienced women",
+
+  "spick": "spooky alien",
+  "spicks": "spooky aliens"
 }
