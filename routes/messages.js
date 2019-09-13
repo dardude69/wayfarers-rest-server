@@ -10,7 +10,7 @@ module.exports = (gameState, playerRepository) => {
   const validatePostJsonSchema = (req, res, next) => {
     const { sender, content } = req.body;
 
-    if (sender == null || sender.id == null || sender.username == null) {
+    if (sender == null || sender.username == null) {
       return res.sendStatus(400);
     }
 
@@ -25,11 +25,7 @@ module.exports = (gameState, playerRepository) => {
     const username = req.body.sender.username;
 
     if (!(await playerRepository.playerWithUsernameExists(username))) {
-      return res.sendStatus(409);
-    }
-
-    if (req.body.sender.id !== await playerRepository.getPlayerIdFromUsername(username)) {
-      return res.sendStatus(409);
+      return res.sendStatus(404);
     }
 
     next();
@@ -53,13 +49,16 @@ module.exports = (gameState, playerRepository) => {
 
       next();
     },
-    (req, res) => {
+    async (req, res) => {
+      const [ username, content ] = [ req.body.sender.username, req.body.content ];
+      const id = await playerRepository.getPlayerIdFromUsername(username);
+
       gameState.messages.push({
         sender: {
-          id: req.body.sender.id,
-          username: req.body.sender.username
+          id,
+          username
         },
-        content: req.body.content
+        content
       });
 
       return res.sendStatus(204);
