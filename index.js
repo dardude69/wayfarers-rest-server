@@ -4,7 +4,8 @@ const config = require('config');
 const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
-const https = require('https');
+// const https = require('https');
+const http = require('http');
 const loadMap = require('./load-map');
 const util = require('util');
 
@@ -56,11 +57,12 @@ const sqlite3 = require('sqlite3');
   app.use('/api/v2/players', require('./routes/players')(gameState, playerRepository));
   app.use('/api/v2/snapshot', require('./routes/snapshot')(gameState, playerRepository));
 
-  const options = {
-    cert: fs.readFileSync(config.get('tls.certFilePath')),
-    key: fs.readFileSync(config.get('tls.keyFilePath'))
-  };
-  https.createServer(options, app).listen(config.get('port'));
+  // const options = {
+  //   cert: fs.readFileSync(config.get('tls.certFilePath')),
+  //   key: fs.readFileSync(config.get('tls.keyFilePath'))
+  // };
+  const options = {};
+  http.createServer(options, app).listen(config.get('port'));
 
   setInterval(update, 1000 / config.get('tickrate'));
 
