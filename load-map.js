@@ -9,7 +9,6 @@
 
 const assert = require('assert').strict;
 const arrayUtil = require('./array-util');
-const config = require('config');
 
 function getTiles(tiledExport) {
   const tiles = [];
@@ -49,7 +48,7 @@ function getObjectsOfType(tiledExport, type) {
 
   /* Validate object properties. */
 
-  const tileSize = config.get('tileSize');
+  const tileSize = process.env.TILE_SIZE;
 
   objects.forEach(object => {
     assert((object.x % tileSize) == 0);

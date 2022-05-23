@@ -2,7 +2,6 @@
 
 const argon2 = require('argon2');
 const assert = require('assert').strict;
-const config = require('config');
 const util = require('util');
 const uuid = require('uuid/v4');
 
@@ -30,9 +29,10 @@ module.exports = async db => {
         [
           dbRunAsync('INSERT INTO PlayerLocations (player_id, x, y, map) VALUES (?, ?, ?, ?);',
             id,
-            config.get('playerDefaults.location.x'),
-            config.get('playerDefaults.location.y'),
-            config.get('playerDefaults.location.map'))
+            process.env.PLAYER_DEFAULT_LOCATION_X,
+            process.env.PLAYER_DEFAULT_LOCATION_Y,
+            process.env.PLAYER_DEFAULT_LOCATION_MAP
+          )
         ]
       );
 

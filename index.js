@@ -1,6 +1,7 @@
 'use strict';
 
-const config = require('config');
+require('dotenv').config();
+
 const cors = require('cors');
 const express = require('express');
 const fs = require('fs');
@@ -21,7 +22,7 @@ const sqlite3 = require('sqlite3');
     Object.keys(gameState.players)
       .filter(key => {
         const updatedAt = gameState.players[key].updatedAt;
-        const despawnTime = config.get('playerInactivityDespawnTime');
+        const despawnTime = process.env.PLAYER_INACTIVITY_DESPAWN_TIME;
 
         return (Date.now()-updatedAt) >= (1000*despawnTime);
       })
@@ -34,7 +35,7 @@ const sqlite3 = require('sqlite3');
 
   // SQLite database support.
   // TODO: Swap for Mongo (mostly for the fun practice of it).
-  const db = new sqlite3.Database(config.get('sqliteDatabaseFilePath'));
+  const db = new sqlite3.Database(process.env.SQLITE_DATABASE_FILE_PATH);
   await util.promisify(db.run.bind(db))('PRAGMA foreign_keys = ON;');
 
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);
@@ -62,9 +63,9 @@ const sqlite3 = require('sqlite3');
   //   key: fs.readFileSync(config.get('tls.keyFilePath'))
   // };
   const options = {};
-  http.createServer(options, app).listen(config.get('port'));
+  http.createServer(options, app).listen(process.env.PORT);
 
-  setInterval(update, 1000 / config.get('tickrate'));
+  setInterval(update, 1000 / process.env.TICKRATE);
 
   console.log('Server started.');
 
