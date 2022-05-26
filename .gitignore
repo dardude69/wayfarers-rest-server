@@ -5,7 +5,7 @@
 keys/
 
 # SQLite database
-db.sqlite3
+data/db.sqlite3
 
 # Logs
 logs

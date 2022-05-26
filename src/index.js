@@ -4,10 +4,11 @@ require('dotenv').config();
 
 const cors = require('cors');
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs/promises');
 // const https = require('https');
 const http = require('http');
 const loadMap = require('./load-map');
+const path = require('node:path');
 const util = require('util');
 
 const sqlite3 = require('sqlite3');
@@ -33,9 +34,10 @@ const sqlite3 = require('sqlite3');
 
   }
 
-  // SQLite database support.
-  // TODO: Swap for Mongo (mostly for the fun practice of it).
+  // Make SQLite database directory and database file
+  await fs.mkdir(path.dirname(process.env.SQLITE_DATABASE_FILE_PATH), { recursive: true });
   const db = new sqlite3.Database(process.env.SQLITE_DATABASE_FILE_PATH);
+
   await util.promisify(db.run.bind(db))('PRAGMA foreign_keys = ON;');
 
   const [playerRepository] = await Promise.all([require('./repositories/player/sqlite')(db)]);

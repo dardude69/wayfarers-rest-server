@@ -4,7 +4,7 @@
   "description": "Backend server for the Wayfarer's Rest (maybe massively?) multiplayer RPG. 100% REST, accepting no compromises.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/"
   },
   "repository": {
     "type": "git",
